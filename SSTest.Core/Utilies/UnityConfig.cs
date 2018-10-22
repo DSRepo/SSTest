@@ -12,15 +12,16 @@ using Unity.WebApi;
 
 namespace SSTest.Core.Utilies
 {
+    /// <summary>
+    /// IOC container using Unity
+    /// </summary>
     public static class UnityConfig
     {
-
-
-
+        
         public static void RegisterComponents()
         {
             var container = new UnityContainer();
-            //container.RegisterType(typeof(IRepository<>), typeof(Repository<>));
+           
             container.RegisterType<IProductRepository, ProductRepository>();
 
             //container.RegisterTypes(AllClasses.FromLoadedAssemblies(), WithMappings.FromMatchingInterface,WithName.Default);

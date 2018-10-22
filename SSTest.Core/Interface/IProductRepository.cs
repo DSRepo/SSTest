@@ -10,6 +10,6 @@ namespace SSTest.Core.Interface
 {
     public interface IProductRepository: IRepository<Product>
     {
-        
+        //any custome method can be added here
     }
 }

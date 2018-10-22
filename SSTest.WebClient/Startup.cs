@@ -1,7 +1,7 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(SSTest.WebClient.Startup))]
+//[assembly: OwinStartupAttribute(typeof(SSTest.WebClient.Startup))]
 namespace SSTest.WebClient
 {
     public partial class Startup

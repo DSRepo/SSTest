@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace SSTest.Core.Interface
 {
+    /// <summary>
+    /// Generic CRUD repository
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
    public interface IRepository<TEntity> where TEntity : class
     {
 

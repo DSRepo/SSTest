@@ -47,8 +47,8 @@
                 searching: true,
                 ajax: {
                     url:"@Url.Action("GetProducts", "Product")",
-                    type: 'POST'//,
-                    //datatype: 'json'
+                    type: 'POST',
+                    datatype: 'json'
                 }, 
                
                 columns: [
@@ -66,7 +66,7 @@
                      },
                     //{ "data": "Photo" },
                     { "data": "Price" },
-                  //  { "data": "LastUpdated" },
+                 
                     {
                         'data': 'LastUpdated', 'render': function (date) {
                                  var date = new Date(parseInt(date.substr(6)));

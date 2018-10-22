@@ -11,16 +11,24 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using SSTest.Core.DataAccess;
 using SSTest.Core.Interface;
+using SSTest.Core.Utilies;
+using NLog;
 
 namespace SSTest.Service.Controllers
 {
     public class ProductsController : ApiController
     {
-        
-        private IProductRepository _iProductRepository;
-       
+        /// <summary>
+        /// Logger Implementation
+        /// </summary>
+        private static readonly ILogger _logger = LogManager.GetLogger("PoductAPILog");
+        /// <summary>
+        /// IOC implementation. This can be tested using any Testing/Mocking framework
+        /// </summary>
+        private IProductRepository _iProductRepository;       
         public ProductsController(IProductRepository iProductRepository)
         {
+            _logger.Info("API Executed");
             _iProductRepository = iProductRepository;
         }
 
@@ -29,12 +37,30 @@ namespace SSTest.Service.Controllers
         /// /Get List of all the Products
         /// </summary>
         /// <returns>list of products </returns>
+        [Route("api/products")]
+        [HttpGet]
+        [ResponseType(typeof(IList<Product>))]
         public IList<Product> GetProducts()
         {
-            return _iProductRepository.GetAll();
+            try
+            {
+                return _iProductRepository.GetAll();
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex);
+                throw ex;
+            }
         }
 
         // GET: api/Products/5
+        /// <summary>
+        /// Get Product by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Product</returns>
+        [Route("api/products/{id:int}")]
+        [HttpGet]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> GetProduct(int id)
         {
@@ -49,6 +75,14 @@ namespace SSTest.Service.Controllers
         }
 
         // PUT: api/Products/5
+        /// <summary>
+        /// Update Product by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        [Route("api/products/{id:int}")]
+        [HttpPost]
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutProduct(int id, Product product)
         {
@@ -62,15 +96,13 @@ namespace SSTest.Service.Controllers
                 return BadRequest();
             }
 
-           // product = await _iProductRepository.FindAsync(id);
-            //db.Entry(product).State = EntityState.Modified;
-
+         
             try
             {
                 product.LastUpdated = System.DateTime.Now;
                 await _iProductRepository.UpdateAsync(product);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!ProductExists(id))
                 {
@@ -78,7 +110,8 @@ namespace SSTest.Service.Controllers
                 }
                 else
                 {
-                    throw;
+                    _logger.Error(ex);
+                    return Content(HttpStatusCode.BadRequest, ex.Message);
                 }
             }
 
@@ -86,6 +119,13 @@ namespace SSTest.Service.Controllers
         }
 
         // POST: api/Products
+        /// <summary>
+        /// Add New Product
+        /// </summary>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        [Route("api/products")]
+        [HttpPost]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> PostProduct(Product product)
         {
@@ -101,7 +141,8 @@ namespace SSTest.Service.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.Error(ex);
+                return Content(HttpStatusCode.BadRequest, ex.Message);
             }
 
 
@@ -109,6 +150,13 @@ namespace SSTest.Service.Controllers
         }
 
         // DELETE: api/Products/5
+        /// <summary>
+        /// Delete Product by Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("api/products/{id:int}")]
+        [HttpPost]
         [ResponseType(typeof(Product))]
         public async Task<IHttpActionResult> DeleteProduct(int id)
         {
@@ -124,6 +172,10 @@ namespace SSTest.Service.Controllers
             return Ok(product);
         }
 
+        /// <summary>
+        /// Dispose the Objects
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -133,6 +185,11 @@ namespace SSTest.Service.Controllers
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Check if Product exist
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private bool ProductExists(int id)
         {
             return  _iProductRepository.GetAll().Count(e => e.Id == id) > 0;

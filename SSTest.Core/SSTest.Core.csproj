@@ -139,7 +139,6 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Business\ProductRepository.cs" />
     <Compile Include="Business\Repository.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="DataAccess\Model1.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

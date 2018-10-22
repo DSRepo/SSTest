@@ -9,6 +9,11 @@ using System.Data.Entity;
 
 namespace SSTest.Core.Business
 {
+
+    /// <summary>
+    /// Generic CRUD implementaiton using EF
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         private ProductsEntities db = null;

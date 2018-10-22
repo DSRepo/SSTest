@@ -21,8 +21,10 @@ namespace SSTest.WebClient.Controllers
 
         public ProductController()
         {
-            _iProductService = new ProductService(); //TODO: implement IOC
+            _iProductService = new ProductService(); //TODO: implement IOC. Check API implementaiton for reference
         }
+
+
         // GET: Product
         public ActionResult Index()
         {
@@ -30,12 +32,10 @@ namespace SSTest.WebClient.Controllers
             return View();
         }
 
-
-      
+             
       
         public JsonResult GetProducts(DataTableRequest request)
         {
-
 
             IEnumerable<ProductViewModel> products = new List<ProductViewModel>();
 
@@ -65,23 +65,12 @@ namespace SSTest.WebClient.Controllers
             objDataTableResponse.data = pagedProducts.ToArray();
             objDataTableResponse.error = "";
 
-            return Json (objDataTableResponse, JsonRequestBehavior.AllowGet);
+            return Json(objDataTableResponse, JsonRequestBehavior.AllowGet);
 
 
         }
 
-        protected override JsonResult Json(object data, string contentType, Encoding contentEncoding, JsonRequestBehavior behavior)
-        {
-            return new JsonResult()
-            {
-                Data = data,
-                ContentType = contentType,
-                ContentEncoding = contentEncoding,
-                JsonRequestBehavior = behavior,
-                MaxJsonLength = Int32.MaxValue
-            };
-        }
-
+      
 
 
         [HttpGet]
@@ -109,7 +98,6 @@ namespace SSTest.WebClient.Controllers
         [HttpGet]
         public ActionResult Delete(int id)
         {
-            
             _iProductService.Delete(id);
 
             return RedirectToAction("Index");
@@ -163,12 +151,12 @@ namespace SSTest.WebClient.Controllers
                 Response.Output.Write(sw.ToString());
                 Response.Flush();
                 Response.End();
-              //  _logger.Info($"Product list exported as excel file including {products.Count} products.");
+             
                 return View("Index", products);
             }
             catch (Exception ex)
             {
-               // _logger.Error(ex);
+               //TODO: Logger Implementation
                 return View("Error", new { code = -1, message = ex.Message });
             }
         }
