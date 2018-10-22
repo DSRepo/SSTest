@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "Products";
+}
+
+<h2>Product List</h2>
+
+
+<a href="@Url.Action("Create","Product")" class="btn btn-danger" >Add new product</a>
+<br />
+<br />
+
+
+
+
+
+
+
+<table id="productdata" class="table table-condensed table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Photo</th>
+            <th>Price</th>
+            <th>LastUpdated</th>
+            <th>Edit</th>
+            <th>Delete</th>
+            
+        </tr>
+    </thead>
+</table>
+@using (Html.BeginForm("ExportDataToExcel", "Product"))
+{
+    <input type="submit" name="Export" id="Export" value="Export to Excel" class="btn btn-danger" />
+}
+@section scripts
+{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#productdata').DataTable({
+                processing: true,
+                serverSide: true,
+                ordering: false,
+                paging: true,
+                searching: true,
+                ajax: {
+                    url:"@Url.Action("GetProducts", "Product")",
+                    type: 'POST'//,
+                    //datatype: 'json'
+                }, 
+               
+                columns: [
+                    { "data": "Id" },
+                    { "data": "Name" },
+                     {
+                         'data': 'Photo', 'render': function (data, type, row) {
+                             if (data != null) {
+                                 var imgBytes = data.toString().split(",");
+                                 return "<img height='100px'  width='100px' src=\"/Helper/ShowImage.ashx?id=" + row.Id + "\" />";
+                             } else {
+                                 return data;
+                             }
+                         }
+                     },
+                    //{ "data": "Photo" },
+                    { "data": "Price" },
+                  //  { "data": "LastUpdated" },
+                    {
+                        'data': 'LastUpdated', 'render': function (date) {
+                                 var date = new Date(parseInt(date.substr(6)));
+                                 var month = date.getMonth() + 1;
+                                 return date.getDate() + "/" + month + "/" + date.getFullYear();
+                             }
+     },
+
+
+                    {
+                           data: null, render: function (data, type, row) {
+                               return "<a  class='btn btn-danger' onclick=EditData('" + row.Id + "'); >Edit</a>";
+                           }
+                    },
+                     {
+                           data: null, render: function (data, type, row) {
+                               return "<a href='#' class='btn btn-danger' onclick=DeleteData('" + row.Id + "'); >Delete</a>";
+                           }
+                       }
+
+
+                ],
+              
+            });
+        });
+
+     
+        function EditData(id)
+        {
+            location.href = "http://localhost:53481/Product/Edit/" + id;
+        }
+
+        function DeleteData(id) {
+            if (confirm('Are you sure to delete this record? ')) {
+                location.href = "http://localhost:53481/Product/Delete/" + id;
+            }
+
+        }
+
+
+    </script>
+}
+
